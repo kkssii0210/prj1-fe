@@ -6,10 +6,11 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { HomeLayout } from "./layout/HomeLayout";
-import { BoardList } from "./page/BoardList";
-import { BoardWrite } from "./page/BoardWrite";
-import { BoardView } from "./page/BoardView";
-import { BoardEdit } from "./page/BoardEdit";
+import { BoardList } from "./page/board/BoardList";
+import { BoardWrite } from "./page/board/BoardWrite";
+import { BoardView } from "./page/board/BoardView";
+import { BoardEdit } from "./page/board/BoardEdit";
+import { MemberSignup } from "./page/member/MemberSignup";
 
 const routes = createBrowserRouter(
   createRoutesFromElements(
@@ -18,6 +19,7 @@ const routes = createBrowserRouter(
       <Route path="write" element={<BoardWrite />} />
       <Route path="board/:id" element={<BoardView />} />
       <Route path="edit/:id" element={<BoardEdit />}></Route>
+      <Route path="signup" element={<MemberSignup />}></Route>
     </Route>,
   ),
 );
