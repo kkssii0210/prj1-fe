@@ -10,15 +10,19 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function MemberSignup() {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [email, setEmail] = useState("");
-  const [emailAvailable, setEmailAvailable] = useState(false);
+
   const [idAvailable, setIdAvailable] = useState(false);
+  const [emailAvailable, setEmailAvailable] = useState(false);
+
   const toast = useToast();
+  const navigate = useNavigate();
 
   let submitAvailable = true;
 
@@ -45,20 +49,43 @@ export function MemberSignup() {
         password,
         email,
       })
-      .then(() => console.log("good"))
-      .catch(() => console.log("bad"))
+      .then(() => {
+        toast({
+          description: "회원가입이 완료되었습니다",
+          status: "success",
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        if (error.response.status === 400) {
+          toast({
+            description: "입력값을 확인해주세요",
+            status: "error",
+          });
+        } else {
+          toast({
+            description: "입력값을 확인해주세요",
+            status: "error",
+          });
+        }
+        toast({
+          description: "가입중에 오류가 발생하였습니다.",
+          status: "error",
+        });
+      })
       .finally(() => console.log("done"));
   }
 
   function handleIdCheck() {
     const searchParam = new URLSearchParams();
     searchParam.set("id", id);
+
     axios
       .get("/api/member/check?" + searchParam.toString())
       .then(() => {
         setIdAvailable(false);
         toast({
-          description: "이미 사용중인 아이디입니다",
+          description: "이미 사용 중인 ID입니다.",
           status: "warning",
         });
       })
@@ -66,7 +93,7 @@ export function MemberSignup() {
         if (error.response.status === 404) {
           setIdAvailable(true);
           toast({
-            description: "사용 가능한 아이디입니다.",
+            description: "사용 가능한 ID입니다.",
             status: "success",
           });
         }
@@ -76,12 +103,13 @@ export function MemberSignup() {
   function handleEmailCheck() {
     const params = new URLSearchParams();
     params.set("email", email);
+
     axios
       .get("/api/member/check?" + params)
       .then(() => {
         setEmailAvailable(false);
         toast({
-          description: "이미 사용중인 email입니다",
+          description: "이미 사용 중인 email입니다.",
           status: "warning",
         });
       })
@@ -145,7 +173,7 @@ export function MemberSignup() {
           />
           <Button onClick={handleEmailCheck}>중복체크</Button>
         </Flex>
-        <FormErrorMessage>email 중복 체크를 해주세요</FormErrorMessage>
+        <FormErrorMessage>email 중복 체크를 해주세요.</FormErrorMessage>
       </FormControl>
       <Button
         isDisabled={!submitAvailable}
