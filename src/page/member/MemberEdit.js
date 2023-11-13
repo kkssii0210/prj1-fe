@@ -6,6 +6,13 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Spinner,
   useDisclosure,
   useToast,
@@ -57,7 +64,7 @@ export function MemberEdit(props) {
         navigate("/member?" + id);
       })
       .catch((error) => {
-        if (error.response.status === 400) {
+        if (error.response.status === 401 || error.response.status === 403) {
           toast({
             description: "요청이 잘못됐습니다",
             status: "error",
@@ -137,11 +144,27 @@ export function MemberEdit(props) {
         <Button
           colorScheme="purple"
           isDisabled={!emailChecked || !passwordChecked}
-          onClick={handleEdit}
+          onClick={onOpen}
         >
           수정
         </Button>
         <Button onClick={() => navigate(-1)}>취소</Button>
+
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>수정 확인</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>수정 하시겠습니까?</ModalBody>
+
+            <ModalFooter>
+              <Button onClick={onClose}>닫기</Button>
+              <Button onClick={handleEdit} colorScheme="red">
+                삭제
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </div>
   );
