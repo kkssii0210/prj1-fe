@@ -72,6 +72,10 @@ export function MemberView() {
         <FormLabel>email</FormLabel>
         <Input value={member.email} readOnly />
       </FormControl>
+      <FormControl>
+        <FormLabel>nickname</FormLabel>
+        <Input type="text" value={member.nickname} readOnly />
+      </FormControl>
       <Button
         colorScheme="purple"
         onClick={() => navigate("/medit/" + params.toString())}
