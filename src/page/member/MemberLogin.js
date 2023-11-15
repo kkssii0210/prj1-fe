@@ -8,8 +8,8 @@ import {
 } from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import axios from "axios";
-import { LoginContext } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { LoginContext } from "../../component/LoginProvider";
 
 export function MemberLogin() {
   const [id, setId] = useState("");

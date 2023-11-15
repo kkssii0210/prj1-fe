@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Box,
@@ -19,11 +19,14 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { LoginContext } from "../../component/LoginProvider";
+import { CommentContainer } from "../../component/CommentContainer";
 
 export function BoardView() {
   const { id } = useParams();
   const [board, setBoard] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { hasAccess, isAdmin } = useContext(LoginContext);
   let toast = useToast();
   let navigate = useNavigate();
   useEffect(() => {
@@ -73,12 +76,17 @@ export function BoardView() {
         <FormLabel>작성일시</FormLabel>
         <Input value={board.inserted} readOnly />
       </FormControl>
-      <Button colorScheme="purple" onClick={() => navigate("/edit/" + id)}>
-        수정
-      </Button>
-      <Button colorScheme="red" onClick={onOpen}>
-        삭제
-      </Button>
+
+      {(hasAccess(board.writer) || isAdmin()) && (
+        <Box>
+          <Button colorScheme="purple" onClick={() => navigate("/edit/" + id)}>
+            수정
+          </Button>
+          <Button colorScheme="red" onClick={onOpen}>
+            삭제
+          </Button>
+        </Box>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -95,6 +103,7 @@ export function BoardView() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <CommentContainer boardId={id} />
     </Box>
   );
 }
