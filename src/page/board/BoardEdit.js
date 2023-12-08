@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -12,14 +14,17 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Switch,
   Textarea,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 export function BoardEdit() {
   const [board, updateBoard] = useImmer(null);
@@ -27,6 +32,9 @@ export function BoardEdit() {
   const navigate = useNavigate();
   const toast = useToast();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [removeFileIds, setRemoveFileIds] = useState([]);
+  const [uploadFiles, setUploadFiles] = useState(null);
+
   useEffect(() => {
     axios
       .get("/api/board/id/" + id)
@@ -37,29 +45,46 @@ export function BoardEdit() {
   }
 
   function handleEdit() {
+    // 저장 버튼 클릭 시
+    // PUT /api/board/edit
     axios
-      .put("/api/board/edit", board)
+      .putForm("/api/board/edit", {
+        id: board.id,
+        title: board.title,
+        content: board.content,
+        removeFileIds,
+        uploadFiles,
+      })
       .then(() => {
         toast({
-          description: board.id + "번 게시글이 수정 됐습니다",
+          description: board.id + "번 게시글이 수정되었습니다.",
           status: "success",
         });
+
         navigate("/board/" + id);
       })
       .catch((error) => {
         if (error.response.status === 400) {
           toast({
-            description: "요청이 잘못됐습니다",
+            description: "요청이 잘못되었습니다.",
             status: "error",
           });
         } else {
           toast({
-            description: "수정 중에 문제가 발생했습니다",
+            description: "수정 중에 문제가 발생하였습니다.",
             status: "error",
           });
         }
       })
       .finally(() => onClose());
+  }
+
+  function handleRemoveFileSwitch(e) {
+    if (e.target.checked) {
+      setRemoveFileIds([...removeFileIds, e.target.value]);
+    } else {
+      setRemoveFileIds(removeFileIds.filter((item) => item !== e.target.value));
+    }
   }
 
   return (
@@ -87,6 +112,48 @@ export function BoardEdit() {
           }}
         />
       </FormControl>
+      {board.files.length > 0 &&
+        board.files.map((file) => (
+          <Box key={file.id} my="5px" border="3px soild black">
+            <FormControl display="flex" alignItems="center">
+              <FormLabel colorScheme="red">
+                <FontAwesomeIcon color="red" icon={faTrashCan} />
+              </FormLabel>
+              <Switch
+                value={file.id}
+                colorScheme="red"
+                onChange={handleRemoveFileSwitch}
+              />
+            </FormControl>
+            <Box>
+              <Image src={file.url} alt={file.name} />
+            </Box>
+          </Box>
+        ))}
+      {/*<FormControl>*/}
+      {/*  <FormLabel>Files</FormLabel>*/}
+      {/*  <Input type="file" multiple onChange={handleFileUpload} />*/}
+      {/*</FormControl>*/}
+      {/*/!* Display existing files with delete option *!/*/}
+      {/*{board.files.map((file) => (*/}
+      {/*  <Box key={file.id}>*/}
+      {/*    <Image src={file.url} alt={file.name} />*/}
+      {/*    <Button onClick={() => handleFileDelete(file.id)}>Delete</Button>*/}
+      {/*  </Box>*/}
+      {/*))}*/}
+      <FormControl>
+        <FormLabel>이미지</FormLabel>
+        <Input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => setUploadFiles(e.target.files)}
+        />
+        <FormHelperText>
+          한 개 파일은 1MB이내, 총 용량은 10MB이내로 첨부하세요.
+        </FormHelperText>
+      </FormControl>
+
       <Button colorScheme="purple" onClick={onOpen}>
         저장
       </Button>

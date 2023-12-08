@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Input,
   Textarea,
@@ -17,13 +18,15 @@ export function BoardWrite() {
   const toast = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [uploadFiles, setUploadFiles] = useState(null);
 
   function handleSubmit() {
     setIsSubmitting(true);
     axios
-      .post("/api/board/add", {
+      .postForm("/api/board/add", {
         title,
         content,
+        uploadFiles,
       })
       .then(() => {
         toast({
@@ -63,6 +66,18 @@ export function BoardWrite() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           ></Textarea>
+        </FormControl>
+        <FormControl>
+          <FormLabel>이미지</FormLabel>
+          <Input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={(e) => setUploadFiles(e.target.files)}
+          />
+          <FormHelperText>
+            한 개 파일은 1MB이내, 총 용량은 10MB이내로 첨부하세요.
+          </FormHelperText>
         </FormControl>
         <Button
           isDisabled={isSubmitting}

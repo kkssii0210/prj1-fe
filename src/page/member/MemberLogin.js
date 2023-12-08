@@ -1,8 +1,13 @@
 import {
-  Box,
   Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Center,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   useToast,
 } from "@chakra-ui/react";
@@ -40,24 +45,36 @@ export function MemberLogin() {
   }
 
   return (
-    <Box>
-      <h1>로그인</h1>
-      <br />
-      <FormControl>
-        <FormLabel>아이디</FormLabel>
-        <Input value={id} onChange={(e) => setId(e.target.value)} />
-      </FormControl>
-      <FormControl>
-        <FormLabel>암호</FormLabel>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </FormControl>
-      <Button colorScheme="blue" onClick={handleLogin}>
-        로그인
-      </Button>
-    </Box>
+    <Center>
+      <Card w={"lg"}>
+        <CardHeader>
+          <Heading>로그인</Heading>
+        </CardHeader>
+        <CardBody>
+          <FormControl mb={5}>
+            <FormLabel>아이디</FormLabel>
+            <Input
+              border={"solid black"}
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>암호</FormLabel>
+            <Input
+              border={"solid black"}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </FormControl>
+        </CardBody>
+        <CardFooter>
+          <Button colorScheme="blue" onClick={handleLogin}>
+            로그인
+          </Button>
+        </CardFooter>
+      </Card>
+    </Center>
   );
 }

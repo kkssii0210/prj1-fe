@@ -4,8 +4,10 @@ import axios from "axios";
 import {
   Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
+  Heading,
   Input,
   Modal,
   ModalBody,
@@ -18,9 +20,14 @@ import {
   Textarea,
   useDisclosure,
   useToast,
+  Tooltip,
+  Image,
 } from "@chakra-ui/react";
 import { LoginContext } from "../../component/LoginProvider";
 import { CommentContainer } from "../../component/CommentContainer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 
 export function BoardView() {
   const { id } = useParams();
@@ -29,15 +36,41 @@ export function BoardView() {
   const { hasAccess, isAdmin } = useContext(LoginContext);
   let toast = useToast();
   let navigate = useNavigate();
+  const [like, setLike] = useState(null);
   useEffect(() => {
     axios
       .get("/api/board/id/" + id)
       .then((response) => setBoard(response.data));
   }, []);
+  useEffect(() => {
+    axios
+      .get("/api/like/board/" + id)
+      .then((response) => setLike(response.data));
+  }, []);
   if (board === null) {
     return <Spinner />;
   }
-
+  function LikeContainer({ like, onClick }) {
+    const { isAuthenticated } = useContext(LoginContext);
+    if (like === null) {
+      return <Spinner />;
+    }
+    return (
+      <Flex gap={2}>
+        <Tooltip
+          isDisabled={isAuthenticated()}
+          hasArrow
+          label={"로그인 하세요."}
+        >
+          <Button variant="ghost" size="xl" onClick={onClick}>
+            {like.like && <FontAwesomeIcon icon={fullHeart} size="xl" />}
+            {like.like || <FontAwesomeIcon icon={emptyHeart} size="xl" />}
+          </Button>
+        </Tooltip>
+        <Heading size="xl">{like.countLike}</Heading>
+      </Flex>
+    );
+  }
   function handleDelete() {
     axios
       .delete("/api/board/remove/" + id)
@@ -56,10 +89,19 @@ export function BoardView() {
       })
       .finally(() => onClose());
   }
-
+  function handleLike() {
+    axios
+      .post("/api/like", { boardId: board.id })
+      .then((response) => setLike(response.data))
+      .catch(() => console.log("bad"))
+      .finally(() => console.log("done"));
+  }
   return (
     <Box>
-      <h1>글 보기</h1>
+      <Flex justifyContent="space-between">
+        <Heading size="xl">{board.id}번 글 보기</Heading>
+        <LikeContainer like={like} onClick={handleLike} />
+      </Flex>
       <FormControl>
         <FormLabel>제목</FormLabel>
         <Input value={board.title} readOnly />
@@ -68,9 +110,16 @@ export function BoardView() {
         <FormLabel>본문</FormLabel>
         <Textarea value={board.content} readOnly />
       </FormControl>
+
+      {board.files.map((file) => (
+        <Box key={file.id} my="5px" border="3px solid black">
+          <Image width="100%" src={file.url} alt={file.name} />
+        </Box>
+      ))}
+
       <FormControl>
         <FormLabel>작성자</FormLabel>
-        <Input value={board.nickname} readOnly />
+        <Input value={board.nickName} readOnly />
       </FormControl>
       <FormControl>
         <FormLabel>작성일시</FormLabel>

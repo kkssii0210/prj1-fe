@@ -4,6 +4,9 @@ export const LoginContext = createContext(null);
 function LoginProvider({ children }) {
   const [login, setLogin] = useState("");
 
+  useEffect(() => {
+    fetchLogin();
+  }, []);
   function fetchLogin() {
     axios.get("/api/member/login").then((response) => setLogin(response.data));
   }
@@ -19,9 +22,6 @@ function LoginProvider({ children }) {
     }
     return false;
   }
-  useEffect(() => {
-    fetchLogin();
-  }, []);
   return (
     <LoginContext.Provider
       value={{ login, fetchLogin, isAuthenticated, hasAccess, isAdmin }}
