@@ -145,12 +145,10 @@ export function BoardList() {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    axios
-      .get("https://dohyung.click/api/board/list?" + params)
-      .then((response) => {
-        setBoardList(response.data.boardList);
-        setPageInfo(response.data.pageInfo);
-      });
+    axios.get("/api/board/list?" + params).then((response) => {
+      setBoardList(response.data.boardList);
+      setPageInfo(response.data.pageInfo);
+    });
   }, [location]);
 
   if (boardList === null) {

@@ -17,11 +17,10 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-export function MemberEdit(props) {
-  const [params] = useSearchParams();
+export function MemberEdit() {
   const { id } = useParams();
   const [password, setPassword] = useState("");
   const [member, setMember] = useState(null);
