@@ -49,5 +49,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://dohyung.click"
+  "proxy": "https://dohyung.click",
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+  }
 }
