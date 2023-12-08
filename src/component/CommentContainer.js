@@ -200,7 +200,7 @@ export function CommentContainer({ boardId }) {
         .get("/api/comment/list?" + params)
         .then((response) => setCommentList(response.data));
     }
-  }, [isSubmitting]);
+  }, [isSubmitting, boardId]);
 
   function handleSubmit(comment) {
     setIsSubmitting(true);
