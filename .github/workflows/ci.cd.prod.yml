@@ -20,8 +20,8 @@ jobs:
             aws-region: ap-northeast-2
       - name: 리액트 빌드
         run: |
-            npm install
-            npm run build
+          npm install
+          CI='false' npm run build
       - name: 빌드한 파일 S3에 업로드
         run: aws s3 sync build/ s3://study0210 --acl public-read
         env:
