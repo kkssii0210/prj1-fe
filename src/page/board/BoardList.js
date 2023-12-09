@@ -16,7 +16,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import axios from "axios";
+
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { ChatIcon } from "@chakra-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,6 +27,7 @@ import {
   faImage,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "../../axiosInstance";
 
 function PageButton({ variant, pageNumber, children }) {
   const [params] = useSearchParams();
@@ -145,7 +146,7 @@ export function BoardList() {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    axios.get("/api/board/list?" + params).then((response) => {
+    axiosInstance.get("/api/board/list?" + params).then((response) => {
       setBoardList(response.data.boardList);
       setPageInfo(response.data.pageInfo);
     });
