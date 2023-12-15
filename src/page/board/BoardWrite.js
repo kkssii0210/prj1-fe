@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../axiosInstance";
 
 export function BoardWrite() {
   const [title, setTitle] = useState("");
@@ -22,7 +23,7 @@ export function BoardWrite() {
 
   function handleSubmit() {
     setIsSubmitting(true);
-    axios
+    axiosInstance
       .postForm("/api/board/add", {
         title,
         content,

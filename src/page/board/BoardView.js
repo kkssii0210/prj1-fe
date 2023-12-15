@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -28,6 +27,7 @@ import { CommentContainer } from "../../component/CommentContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "../../axiosInstance";
 
 export function BoardView() {
   const { id } = useParams();
@@ -38,12 +38,12 @@ export function BoardView() {
   let navigate = useNavigate();
   const [like, setLike] = useState(null);
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/api/board/id/" + id)
       .then((response) => setBoard(response.data));
   }, []);
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/api/like/board/" + id)
       .then((response) => setLike(response.data));
   }, []);
@@ -72,7 +72,7 @@ export function BoardView() {
     );
   }
   function handleDelete() {
-    axios
+    axiosInstance
       .delete("/api/board/remove/" + id)
       .then((response) => {
         toast({
@@ -90,7 +90,7 @@ export function BoardView() {
       .finally(() => onClose());
   }
   function handleLike() {
-    axios
+    axiosInstance
       .post("/api/like", { boardId: board.id })
       .then((response) => setLike(response.data))
       .catch(() => console.log("bad"))

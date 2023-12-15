@@ -22,9 +22,10 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useImmer } from "use-immer";
-import axios from "axios";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import axiosInstance from "../../axiosInstance";
 
 export function BoardEdit() {
   const [board, updateBoard] = useImmer(null);
@@ -36,7 +37,7 @@ export function BoardEdit() {
   const [uploadFiles, setUploadFiles] = useState(null);
 
   useEffect(() => {
-    axios
+    axiosInstance
       .get("/api/board/id/" + id)
       .then((response) => updateBoard(response.data));
   }, []);
@@ -47,7 +48,7 @@ export function BoardEdit() {
   function handleEdit() {
     // 저장 버튼 클릭 시
     // PUT /api/board/edit
-    axios
+    axiosInstance
       .putForm("/api/board/edit", {
         id: board.id,
         title: board.title,

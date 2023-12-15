@@ -150,7 +150,7 @@ export function BoardList() {
       setBoardList(response.data.boardList);
       setPageInfo(response.data.pageInfo);
     });
-  }, [location]);
+  }, [location, params]);
 
   if (boardList === null) {
     return <Spinner />;
